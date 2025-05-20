@@ -5,6 +5,7 @@ INTEGER, PLUS, EOF = 'INTEGER', 'PLUS', 'EOF'
 
 # This is the token class
 class Token(object):
+    
     #this will initialize the token
     def __init__(tkn, type, value):
         tkn.type = type
@@ -20,7 +21,6 @@ class Token(object):
 
 # This is the lexer/intepreter class
 class Interpreter(object):
-    
 
     # This will initilize the interpreter
     def __init__(intr, text):
