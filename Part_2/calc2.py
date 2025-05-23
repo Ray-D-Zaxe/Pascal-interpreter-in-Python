@@ -73,6 +73,7 @@ class Interpreter(object):
             # Checks to skip whitespaces
             if intr.current_char.isspace():
                 intr.skip_whitespace()
+                continue
             
             # Returns the integer token
             if intr.current_char.isdigit():
