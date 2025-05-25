@@ -1,7 +1,9 @@
+# Variables representing the token types (kinda like data types???)
 INTEGER, PLUS, MINUS, EOF = "INTEGER", "PLUS", "MINUS", "EOF"
 
 
 
+# The token class
 class Token(object):
     def __init__(tkn, type, value):
         tkn.type = type
@@ -17,7 +19,11 @@ class Token(object):
 
 
 
+# The Interpreter class
 class Interpreter(object):
+    #############################################################
+    # LEXER CODE                                                #
+    #############################################################
     def __init__(intr, text):
         intr.text = text
         intr.pos = 0
@@ -72,6 +78,11 @@ class Interpreter(object):
             intr.error()
         
         return Token(EOF, None)
+    
+    
+    #############################################################
+    # PARSER CODE                                               #
+    #############################################################
     
     
     def eat(intr, token_type):
