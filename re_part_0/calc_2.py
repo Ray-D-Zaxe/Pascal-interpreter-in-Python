@@ -16,8 +16,8 @@ class Interpreter(object):
     def __init__(self, text):
         self.text = text
         self.pos = 0
-        self.current_char = None
-        self.current_token = self.text[self.pos]
+        self.current_token = None
+        self.current_char = self.text[self.pos]
     
     def error(self):
         raise Exception("Error Parsing Input")
@@ -37,3 +37,59 @@ class Interpreter(object):
         result = ''
         while (self.current_char is not None and self.current_char.isdigit()):
             result += self.current_char
+            self.advance()
+        return int(result)
+    
+    def get_next_token(self):
+        while self.current_char is not None:
+            if self.current_char.isspace():
+                self.skip_whitespace()
+                continue
+            if self.current_char.isdigit():
+                return Token(INTEGER, self.integer())
+            if '+' == self.current_char:
+                self.advance()
+                return Token(PLUS, self.current_char)
+            if '-' == self.current_char:
+                self.advance()
+                return Token(MINUS, self.current_char)
+            self.error()
+        return Token(EOF, None)
+    
+    def eat(self, token_type):
+        if self.current_token.type == token_type:
+            self.current_token = self.get_next_token()
+        else:
+            self.error()
+    
+    def expr(self):
+        self.current_token = self.get_next_token()
+        left = self.current_token
+        self.eat(INTEGER)
+        operation = self.current_token
+        if PLUS == operation.type:
+            self.eat(PLUS)
+        else:
+            self.eat(MINUS)
+        right = self.current_token
+        self.eat(INTEGER)
+        if PLUS == operation.type:
+            result = left.value + right.value
+        else:
+            result = left.value - right.value
+        return result
+
+def main():
+    while True:
+        try:
+            text = input('calc>')
+        except EOFError:
+            break
+        if not text:
+            continue
+        interpreter = Interpreter(text)
+        result = interpreter.expr()
+        print(result)
+
+if '__main__' == __name__:
+    main()
