@@ -58,7 +58,7 @@ class Interpreter(object):
     
 
     # This will help us parse the input string
-    def eat(intr, token_type):
+    def eat(intr, token_type):  
         if intr.current_token.type == token_type:
             intr.current_token = intr.get_next_token()
         else:
