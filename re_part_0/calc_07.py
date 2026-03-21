@@ -184,7 +184,6 @@ class Parser:
         raise Exception("Invalid Syntex!!!")
     
     def eat(self, token_type):
-        print(self.current_token)
         if (token_type == self.current_token.type):
             self.current_token = self.lexer.get_next_token()
         else:
