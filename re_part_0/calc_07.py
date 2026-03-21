@@ -1,4 +1,6 @@
 INTEGER, PLUS, MINUS, MUL, DIV, LPRN, RPRN, EOF = "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPRN", "RPRN", "EOF"
+ID, DOT, SEMI, ASSIGN = "ID", "DOT", "SEMI", "ASSIGN"
+BEGIN, END = "BEGIN", "END"
 
 
 
@@ -72,22 +74,6 @@ class Lexer:
             # For removal of space
             if (self.current_char.isspace()):
                 self.skip_whitespace()
-            # Let's play a game, keyword or variable...its an identifier
-            if (self.current_char.isalnum()):
-                return self._id()
-            # Lets work on assignment
-            if ((":" == self.current_char) and ("=" == self.peek())):
-                self.advance()
-                self.advance()
-                return Token(ASSIGN, ":=")
-            # What about semi colons???
-            if (";" == self.current_char):
-                self.advance()
-                return Token(SEMI, ";")
-            # And the DOT
-            if ("." == self.current_char):
-                self.advance()
-                return Token(DOT, ".")
             # This is an integer
             if (self.current_char.isdigit()):
                 return Token(INTEGER, self.integer())
@@ -115,6 +101,22 @@ class Lexer:
             if (")" == self.current_char):
                 self.advance()
                 return Token(RPRN, ")")
+            # Let's play a game, keyword or variable...its an identifier
+            if (self.current_char.isalnum()):
+                return self._id()
+            # Lets work on assignment
+            if ((":" == self.current_char) and ("=" == self.peek())):
+                self.advance()
+                self.advance()
+                return Token(ASSIGN, ":=")
+            # What about semi colons???
+            if (";" == self.current_char):
+                self.advance()
+                return Token(SEMI, ";")
+            # And the DOT
+            if ("." == self.current_char):
+                self.advance()
+                return Token(DOT, ".")
             self.error()
         return Token(EOF, None)
 
@@ -144,6 +146,31 @@ class Num(AST):
     def __init__(self, token):
         self.token = token
         self.value = token.value
+
+
+class Compound(AST):
+    def __init__(self):
+        self.children = []
+
+
+
+class Assign(AST):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.token = self.op = op
+        self.right = right
+
+
+
+class Var(AST):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+
+
+class NoOp(AST):
+    pass
 
 
 
@@ -179,6 +206,9 @@ class Parser:
             node = self.expr()
             self.eat(RPRN)
             return node
+        else:
+            node = self.variable()
+            return node
     
     def term(self):
         node = self.factor()
@@ -203,8 +233,67 @@ class Parser:
             node = BinOp(left= node, op= token, right= self.term())
         return node
     
+    def empty(self):
+        return NoOp()
+    
+    def variable(self):
+        node = Var(self.current_token)
+        self.eat(ID)
+        return node
+    
+    def assignment_Statement(self):
+        left = self.variable()
+        token = self.current_token
+        self.eat(ASSIGN)
+        right = self.expr()
+
+        node = Assign(left, token, right)
+        return node
+    
+    def statement(self):
+        if (BEGIN == self.current_token.type):
+            node = self.compound_statement()
+        elif (ID == self.current_token.type):
+            node = self.assignment_Statement()
+        else:
+            node = self.empty()
+        return node
+    
+    def statement_list(self):
+        node = self.statement()
+
+        results = [node]
+
+        while (SEMI == self.current_token.type):
+            self.eat(SEMI)
+            results.append(self.statement())
+        
+        if (ID == self.current_token.type):
+            self.error()
+        
+        return results
+    
+    def compound_statement(self):
+        self.eat(BEGIN)
+        nodes = self.statement_list()
+        self.eat(END)
+        
+        root = Compound()
+        for node in nodes:
+            root.children.append(node)
+        
+        return root
+    
+    def program(self):
+        node = self.compound_statement()
+        self.eat(DOT)
+        return node
+
     def parse(self):
-        return self.expr()
+        node = self.program()
+        if (EOF != node.current_token.type):
+            self.error()
+        return node
 
 
 
@@ -222,6 +311,7 @@ class NodeVisitor:
 class Interpreter(NodeVisitor):
     def __init__(self, parser):
         self.parser = parser
+        self.GLOBAL_SCOPE = {}
 
     def visit_UnaryOp(self, node):
         if (PLUS == node.op.type):
@@ -241,6 +331,25 @@ class Interpreter(NodeVisitor):
     
     def visit_Num(self, node):
         return node.value
+    
+    def visit_NoOp(self, node):
+        pass
+
+    def visit_Var(self, node):
+        var_name = node.value
+        val = self.GLOBAL_SCOPE.get(var_name)
+        if (None == val):
+            raise NameError(repr(var_name))
+        else:
+            return val
+
+    def visit_Assign(self, node):
+        var_name = node.left.value
+        self.GLOBAL_SCOPE[var_name] = self.visit(node.right)
+
+    def visit_Compound(self, node):
+        for child in node.children:
+            self.visit(child)
     
     def interpret(self):
         tree = self.parser.parse()
