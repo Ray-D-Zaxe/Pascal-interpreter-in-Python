@@ -74,9 +74,6 @@ class Lexer:
             # For removal of space
             if (self.current_char.isspace()):
                 self.skip_whitespace()
-            # This is an integer
-            if (self.current_char.isdigit()):
-                return Token(INTEGER, self.integer())
             # This is for addition
             if ("+" == self.current_char):
                 self.advance()
@@ -101,9 +98,6 @@ class Lexer:
             if (")" == self.current_char):
                 self.advance()
                 return Token(RPRN, ")")
-            # Let's play a game, keyword or variable...its an identifier
-            if (self.current_char.isalnum()):
-                return self._id()
             # Lets work on assignment
             if ((":" == self.current_char) and ("=" == self.peek())):
                 self.advance()
@@ -117,6 +111,12 @@ class Lexer:
             if ("." == self.current_char):
                 self.advance()
                 return Token(DOT, ".")
+            # This is an integer
+            if (self.current_char.isdigit()):
+                return Token(INTEGER, self.integer())
+            # Let's play a game, keyword or variable...its an identifier
+            if (self.current_char.isalnum()):
+                return self._id()
             self.error()
         return Token(EOF, None)
 
