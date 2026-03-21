@@ -112,10 +112,10 @@ class Lexer:
                 self.advance()
                 return Token(DOT, ".")
             # This is an integer
-            if (self.current_char.isdigit()):
+            if ((self.current_char is not None) and (self.current_char.isdigit())):
                 return Token(INTEGER, self.integer())
             # Let's play a game, keyword or variable...its an identifier
-            if (self.current_char.isalpha()):
+            if ((self.current_char is not None) and (self.current_char.isalpha())):
                 return self._id()
             self.error()
         return Token(EOF, None)
