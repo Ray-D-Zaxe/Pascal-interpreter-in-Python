@@ -76,6 +76,13 @@ class AST:
 
 
 
+class UnaryOp(AST):
+    def __init__(self, op, expr):
+        self.token = self.op = op
+        self.expr = expr
+
+
+
 class BinOp(AST):
     def __init__(self, left, op, right):
         self.left = left
@@ -110,6 +117,14 @@ class Parser:
         if (INTEGER == token.type):
             self.eat(INTEGER)
             return Num(token)
+        elif (PLUS == token.type):
+            self.eat(PLUS)
+            node = UnaryOp(token, self.factor())
+            return node
+        elif (MINUS == token.type):
+            self.eat(MINUS)
+            node = UnaryOp(token, self.factor())
+            return node
         elif (LPRN == token.type):
             self.eat(LPRN)
             node = self.expr()
@@ -158,15 +173,21 @@ class NodeVisitor:
 class Interpreter(NodeVisitor):
     def __init__(self, parser):
         self.parser = parser
+
+    def visit_UnaryOp(self, node):
+        if (PLUS == node.op.type):
+            return +self.visit(node.expr)
+        elif (MINUS == node.op.type):
+            return -self.visit(node.expr)
     
     def visit_BinOp(self, node):
-        if PLUS == node.op.type:
+        if (PLUS == node.op.type):
             return self.visit(node.left) + self.visit(node.right)
-        elif MINUS == node.op.type:
+        elif (MINUS == node.op.type):
             return self.visit(node.left) - self.visit(node.right)
-        elif MUL == node.op.type:
+        elif (MUL == node.op.type):
             return self.visit(node.left) * self.visit(node.right)
-        elif DIV == node.op.type:
+        elif (DIV == node.op.type):
             return self.visit(node.left) / self.visit(node.right)
     
     def visit_Num(self, node):
