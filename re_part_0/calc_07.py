@@ -74,6 +74,7 @@ class Lexer:
             # For removal of space
             if (self.current_char.isspace()):
                 self.skip_whitespace()
+                continue
             # This is for addition
             if ("+" == self.current_char):
                 self.advance()
