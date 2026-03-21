@@ -115,7 +115,7 @@ class Lexer:
             if (self.current_char.isdigit()):
                 return Token(INTEGER, self.integer())
             # Let's play a game, keyword or variable...its an identifier
-            if (self.current_char.isalnum()):
+            if (self.current_char.isalpha()):
                 return self._id()
             self.error()
         return Token(EOF, None)
@@ -183,6 +183,7 @@ class Parser:
         raise Exception("Invalid Syntex!!!")
     
     def eat(self, token_type):
+        print(self.current_token)
         if (token_type == self.current_token.type):
             self.current_token = self.lexer.get_next_token()
         else:
