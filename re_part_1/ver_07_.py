@@ -2,7 +2,7 @@
 Objectives::
 1. [x] Add a new UnaryOp AST node class
 2. [x] Extend the parser to generate an AST with UnaryOp nodes
-3. [ ] Extend the interpreter and add a new visit_UnaryOp method
+3. [x] Extend the interpreter and add a new visit_UnaryOp method
     to interpret unary operators
 '''
 
