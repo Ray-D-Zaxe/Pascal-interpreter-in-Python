@@ -12,6 +12,8 @@ Token types::
 - DIV ('/' arithmatic operator)
 - PLUS ('+' binary arithmatic operator)
 - MINUS ('-' binary arithmatic operator)
+- LPARAN ('(' Left-Paranthesis)
+- RPARAN (')' Right-Paranthesis)
 '''
 
 INTEGER, EOF = 'INTEGER', 'EOF'
