@@ -1,13 +1,16 @@
 '''
 Objectives::
-1. [] Extend the calculator to handle multiplication of two integers
-2. [] Extend the calculator to handle division of two integers
+1. [x] Extend the calculator to handle multiplication of two integers
+2. [x] Extend the calculator to handle division of two integers
 '''
 
 '''
 Token types::
 - EOF (End-Of-File)
 - INTEGER (Integers)
+
+- MUL ('*' arithmatic operator)
+- DIV ('/' arithmatic operator)
 - PLUS ('+' binary arithmatic operator)
 - MINUS ('-' binary arithmatic operator)
 '''
@@ -104,10 +107,6 @@ class Interpreter(object):
             self.current_token = self.lexer.getNextToken()
         else:
             self.error()
-    
-    # factor:: integer | factor * factor | factor / factor
-    # term:: factor | factor + factor | factor - factor
-    # expression:: term
     
     def factor(self):
         token = self.current_token
