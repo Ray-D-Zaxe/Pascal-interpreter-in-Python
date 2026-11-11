@@ -1,6 +1,6 @@
 '''
 Objectives::
-- [] Extend the calculator to handle paranthesis
+- [x] Extend the calculator to handle paranthesis
 '''
 
 '''
