@@ -1,3 +1,6 @@
 # Ignore the pycache files
 re_part_0/__pycache__/
 re_part_1/__pycache__/
+
+# Test file
+re_part_1/test_.py
