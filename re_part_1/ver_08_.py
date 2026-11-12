@@ -13,11 +13,11 @@ Objectives::
         )
     2.3 [x] Update parse method.
     2.4 [x] Update factor method.
-3. [-] Interpreter::
-    3.1 [-] New methods => (
+3. [x] Interpreter::
+    3.1 [x] New methods => (
         visit_Compound, visit_Assign, visit_Var, visit_NoOp
     )
-    3.2 [] Create basic symbol table, GLOBAL_SCOPE.
+    3.2 [x] Create basic symbol table, GLOBAL_SCOPE.
 '''
 
 '''
